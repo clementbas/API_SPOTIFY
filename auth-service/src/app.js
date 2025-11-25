@@ -13,7 +13,7 @@ export const createApp = () => {
     app.use(express.json());
 
     app.use('/api/auth', authRouter);
-    app.use('/api/auth', userRouter);
+    app.use('/api/users', userRouter);
 
     app.use(errorHandler);
 

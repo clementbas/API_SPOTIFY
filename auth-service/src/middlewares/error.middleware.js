@@ -1,9 +1,33 @@
 export const errorHandler = (err, req, res, next) => {
-  //ATTENTION CETTE LIGNE EN DEV UNIQUEMENT A NE PAS GARDER !!!!  
-  console.error(err);
+  const env = process.env.NODE_ENV || 'development';
 
+  // Status HTTP
   const status = err.status || 500;
-  const message = err.message || 'Erreur interne du serveur';
 
-  return res.status(status).json({ message });
+  // Message visible côté client
+  const message =
+    err.message || 'Une erreur interne est survenue sur le serveur';
+
+  // Code interne (optionnel)
+  const code = err.code || null;
+
+  const response = {
+    success: false,
+    error: {
+      message,
+      status,
+      code,
+      path: req.originalUrl,
+      method: req.method,
+      timestamp: new Date().toISOString(),
+    },
+  };
+
+  // En dev : on inclut la stack
+  if (env === 'development') {
+    response.error.stack = err.stack;
+    console.error('🔴 ERROR STACK :', err);
+  }
+
+  return res.status(status).json(response);
 };
