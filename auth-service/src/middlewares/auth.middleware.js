@@ -1,22 +1,13 @@
-import { verifyAccessToken } from '../utils/jwt.js';
+import { env } from '../config/env.js';
 
-export const authMiddleware = (req, res, next) => {
-  const authHeader = req.headers.authorization || '';
-  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+export const checkServiceToken = (req, res, next) => {
+  const serviceToken = req.headers['x-service-token'];
 
-  if (!token) {
-    const err = new Error('Token manquant');
-    err.status = 401;
-    return next(err);
+  if (!serviceToken || serviceToken !== env.authServiceToken) {
+    return res.status(403).json({
+      message: 'Accès interdit : token de service invalide.',
+    });
   }
 
-  try {
-    const payload = verifyAccessToken(token);
-    req.user = payload;
-    return next();
-  } catch (error) {
-    const err = new Error('Token invalide ou expiré');
-    err.status = 401;
-    return next(err);
-  }
+  next();
 };

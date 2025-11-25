@@ -4,6 +4,7 @@ dotenv.config();
 export const env = {
   port: process.env.PORT || 4000,
   nodeEnv: process.env.NODE_ENV || 'development',
+  authServiceToken: process.env.AUTH_SERVICE_TOKEN,
 
   db: {
     host: process.env.DB_HOST || 'localhost',
